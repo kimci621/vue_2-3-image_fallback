@@ -175,3 +175,41 @@ watch(
 // Раскомментируй, если нужна предварительная проверка
 // watch(fallbackUrls, preloadUrls, { immediate: true })
 </script>
+
+
+// helpers/image
+/**
+ * Возвращает URL изображения с добавленными размерами (ширина x высота) перед расширением файла.
+ * @param {string} src - Исходный путь к изображению
+ * @param {number} s - Требуемая ширина изображения
+ * @param {number} h - Требуемая высота изображения
+ * @param {number} dens - Плотность изображения
+ * @returns {string} Новый путь к изображению с размерами
+ */
+export const makeResizedImageUrl = ({ src, w, h, dens, ext }) => {
+  const indexOfLastDot = src.lastIndexOf('.')
+  const baseUrl = src.slice(0, indexOfLastDot)
+  const sizes = w && h ? `__${w}x${h}` : ''
+  const extension = ext ? `.${ext}` : src.slice(indexOfLastDot, src.length)
+  const densityString = dens ? ` ${dens}x` : ''
+
+  return `${baseUrl}${sizes}${extension}${densityString}`
+}
+
+/**
+ * Возвращает массив URL изображений с размерами (ширина x высота) перед расширением файла.
+ * @param {string} src - Исходный путь к изображению
+ * @param {{w: number, h: number, dens?: number, ext?: string}[]} sizes - Массив объектов с размерами изображений
+ * @returns {Array} Массив URL изображений с размерами
+ */
+export const makeResizedSrcSet = (src, sizes) => {
+  return sizes
+    .map((size) => {
+      return makeResizedImageUrl({
+        src,
+        ...size,
+      })
+    })
+    .join(', ')
+}
+
